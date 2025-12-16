@@ -48,32 +48,6 @@ A powerful desktop video editor optimized for 4K action-camera footage, built wi
 - **Windows / macOS / Linux**
 - **Recommended**: NVIDIA GPU for hardware acceleration
 
-### Installation
-
-```powershell
-# Clone the repository
-git clone https://github.com/yourusername/electron-video-editor.git
-cd electron-video-editor
-
-# Install dependencies
-npm install
-
-# Build the project
-npm run build
-
-# Start the application
-npm start
-```
-
-### Development Mode
-
-```powershell
-# Watch mode for hot-reloading
-npm run dev
-
-# In another terminal, start Electron
-npm start
-```
 
 ## 📖 Usage Guide
 
