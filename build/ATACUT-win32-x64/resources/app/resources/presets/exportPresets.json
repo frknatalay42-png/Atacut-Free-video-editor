@@ -1,0 +1,59 @@
+{
+  "presets": [
+    {
+      "name": "4K YouTube",
+      "resolution": "3840x2160",
+      "codec": "H.264",
+      "bitrate": "20Mbps",
+      "settings": {
+        "preset": "medium",
+        "profile": "high",
+        "level": "5.2"
+      }
+    },
+    {
+      "name": "1080p Fast",
+      "resolution": "1920x1080",
+      "codec": "H.264",
+      "bitrate": "10Mbps",
+      "settings": {
+        "preset": "fast",
+        "profile": "main",
+        "level": "4.0"
+      }
+    },
+    {
+      "name": "Instagram Feed",
+      "resolution": "1080x1080",
+      "codec": "H.264",
+      "bitrate": "10Mbps",
+      "settings": {
+        "preset": "medium",
+        "profile": "high",
+        "level": "4.1"
+      }
+    },
+    {
+      "name": "Instagram Story",
+      "resolution": "1080x1920",
+      "codec": "H.264",
+      "bitrate": "12Mbps",
+      "settings": {
+        "preset": "medium",
+        "profile": "high",
+        "level": "4.1"
+      }
+    },
+    {
+      "name": "TikTok",
+      "resolution": "1080x1920",
+      "codec": "H.264",
+      "bitrate": "12Mbps",
+      "settings": {
+        "preset": "medium",
+        "profile": "high",
+        "level": "4.1"
+      }
+    }
+  ]
+}
