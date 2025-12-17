@@ -47,7 +47,8 @@
     "ts-loader": "^9.5.0",
     "typescript": "^5.3.0",
     "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.0"
+    "webpack-cli": "^5.1.0",
+    "png-to-ico": "^0.0.5"
   },
   "keywords": [
     "video",

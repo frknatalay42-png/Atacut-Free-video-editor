@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Convert PNG icon to ICO
+        run: node electron-video-editor/convert-to-ico.js
+
       - name: Build app (webpack)
         run: npm run build
 
