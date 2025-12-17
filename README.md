@@ -1,218 +1,245 @@
-# Video Editor - Professional 4K Video Editing
+# 🎬 ATACUT - Professional Video Editor v1.0
 
-A powerful desktop video editor optimized for 4K action-camera footage, built with **Electron + React + TypeScript + Zustand + FFmpeg**.
+A lightweight, powerful video editor built with Electron and FFmpeg. Create, edit, and export professional-quality videos with ease.
 
-## 🎯 Features
+## ✨ Features
 
 ### Core Editing
-- **Multi-track Timeline**: Drag-and-drop video, audio, and text clips across unlimited tracks
-- **Precise Trimming**: Frame-accurate trim handles on every clip
-- **Smart Cut Tools**: Ripple, insert, and overwrite edit modes
-- **Snapping**: Automatic alignment to playhead, clip edges, and markers
-- **Zoom & Mini-map**: Timeline zoom (Ctrl+Scroll) with bird's-eye overview
+- **Multi-track Timeline** - Organize video and audio clips across multiple tracks
+- **Drag & Drop Interface** - Intuitive clip management on timeline
+- **Magnetic Snapping** - Clips automatically snap to nearby edges and markers (100ms threshold)
+- **Trim & In-Out Points** - Precise clip editing down to millisecond accuracy
+- **Copy/Paste/Duplicate** - Work with clips efficiently
 
-### Performance & Optimization
-- **Proxy Editing**: Automatic low-resolution proxies for smooth 4K playback
-- **Hardware Acceleration**: NVENC (NVIDIA) / QSV (Intel) / VAAPI (Linux) support
-- **Smart Rendering**: Re-encode only modified clips (10x faster exports)
-- **Background Processing**: Non-blocking proxy/thumbnail generation
+### Color & Effects
+- **Color Grading**
+  - Brightness adjustment (-100 to +100)
+  - Contrast control (-100 to +100)
+  - Saturation adjustment (-100 to +100)
+- **Filter Effects**
+  - Blur (configurable intensity)
+  - Sharpen (detail enhancement)
+  - Sepia (warm vintage tone)
+  - Vintage (retro color-shifted look)
 
-### Effects & Transitions
-- **9 Built-in Effects**: Brightness, Contrast, Saturation, Blur, Sharpen, Vignette, Film Grain, Chromatic Aberration, LUT
-- **7 Transitions**: Fade, Dissolve, Wipe, Slide, Zoom, Spin, Glitch
-- **Drag-and-Drop**: Apply effects/transitions by dragging onto clips
+### Text & Overlays
+- **Text Overlays** - Add multiple text clips with custom properties
+  - Font size (8-72px)
+  - Color picker (RGB)
+  - Position control (normalized 0-1 scale)
+  - Duration control per clip
+- **Text Rendering** - Text appears in exported videos
 
-### Export & Rendering
-- **Social Media Presets**: YouTube 4K/1080p, Instagram Story/Post, TikTok, Twitter
-- **Export Queue**: Batch export multiple projects simultaneously
-- **Progress Tracking**: Real-time progress bars with time estimates
-- **Smart Render Toggle**: Dramatically reduce export time for minor edits
+### Export
+- **Format**: MP4 (H.264 video + AAC audio)
+- **Resolution**: 1920×1080 (Full HD)
+- **Hardware Acceleration**: NVIDIA NVENC, Intel QSV
+- **All Effects Applied**: Color grading, filters, and text render in output
 
-### Smart Tools
-- **Clipboard History**: 10-item visual clipboard with Ctrl+Shift+V
-- **Auto-Save**: Automatic project backups every 60 seconds
-- **Crash Recovery**: Resume from last saved state after crashes
-- **Waveform Display**: Audio visualization on timeline clips
+### Timeline Controls
+- **Playback**: Play/pause, seek, frame-by-frame navigation
+- **Markers**: Add markers for key points
+- **Zoom**: Adjust timeline zoom level
+- **Selection**: Single/multi-select, lasso selection
+- **Context Menus**: Right-click operations (split, delete, etc.)
 
-### Media Management
-- **Drag Import**: Drag video files from file explorer to timeline
-- **Search & Filter**: Find media by name, type, ratings, or tags
-- **Favorites & Ratings**: 5-star rating system with favorites
-- **Proxy Status**: Visual badges show proxy generation progress
+## ⌨️ Keyboard Shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Play/Pause | `Space` |
+| Delete Clip | `Delete` |
+| Split Clip | `Ctrl+S` |
+| Undo | `Ctrl+Z` |
+| Redo | `Ctrl+Shift+Z` or `Ctrl+Y` |
+| Copy | `Ctrl+C` |
+| Paste | `Ctrl+V` |
+| Duplicate | `Ctrl+D` |
+| Add Marker | `M` |
+| Toggle Snap | `G` |
+| Playhead Left | `←` (±33ms) or `Shift+←` (±1s) |
+| Playhead Right | `→` (±33ms) or `Shift+→` (±1s) |
+| Go to Start | `Home` |
+| Go to End | `End` |
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- **Node.js** 18+ and npm
-- **FFmpeg** installed and available in PATH (or bundled via ffmpeg-static)
-- **Windows / macOS / Linux**
-- **Recommended**: NVIDIA GPU for hardware acceleration
+### Installation
+1. Download `ATACUT-1.0-Setup.exe`
+2. Run the installer
+3. Launch ATACUT from Start Menu or Desktop shortcut
 
+### First Export
+1. **Add Media**: Click "Add Media" or drag files into the media library
+2. **Create Clips**: Drag videos from media library onto timeline
+3. **Edit**: Adjust color, add text, trim clips as needed
+4. **Export**: Click "Export Video" and wait for processing
+5. **Save**: Exported video is automatically saved to your user folder
 
-## 📖 Usage Guide
-
-### Basic Workflow
-
-1. **Import Media**
-   - Click "Import" button or drag video files into Media Library
-   - Proxies generate automatically for 4K files (toggle in Preferences)
-
-2. **Build Timeline**
-   - Drag clips from Media Library to Timeline tracks
-   - Trim clips by dragging left/right edges
-   - Move clips by dragging the clip body
-   - Delete clips with `Delete` key
-
-3. **Add Effects**
-   - Open Effects Panel (left sidebar)
-   - Drag effects onto clips in timeline
-   - Adjust effect parameters in Properties Panel
-
-4. **Export**
-   - Click "Export" button
-   - Select social media preset or custom settings
-   - Enable Smart Render for faster exports
-   - Click "Start Export" to add to queue
-
-### Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `Space` | Play/Pause |
-| `Left/Right Arrow` | Move playhead 1 frame |
-| `Ctrl+Z` | Undo |
-| `Ctrl+Y` | Redo |
-| `Ctrl+C` | Copy selected clips |
-| `Ctrl+V` | Paste clips |
-| `Ctrl+Shift+V` | Open clipboard history |
-| `Delete` | Delete selected clips |
-| `Ctrl+Scroll` | Zoom timeline |
-| `Ctrl+S` | Save project |
-| `Ctrl+O` | Open project |
-
-### Edit Modes
-
-- **Normal**: Default click-and-drag editing
-- **Ripple**: Moving/trimming clips shifts all subsequent clips
-- **Insert**: Pasting clips pushes existing clips forward
-- **Overwrite**: Pasting clips replaces existing clips
-
-## 🏗️ Architecture
-
-### Technology Stack
-- **Electron 28**: Cross-platform desktop framework
-- **React 18**: UI rendering with Hooks
-- **TypeScript 5**: Type-safe development
-- **Zustand 4**: Lightweight state management with Immer
-- **FFmpeg**: Video processing and encoding
-- **Canvas API**: Real-time video preview rendering
-
-### Project Structure
+### Export Output
+Exported videos are saved to:
 ```
-electron-video-editor/
-├── src/
-│   ├── main/              # Electron main process
-│   │   ├── index.ts       # App entry, window management
-│   │   ├── preload.ts     # IPC bridge (security boundary)
-│   │   ├── ffmpeg/        # Video processing
-│   │   ├── ipc/           # IPC handlers
-│   │   └── storage/       # Project/cache/recovery
-│   ├── renderer/          # React app
-│   │   ├── App.tsx        # Main layout
-│   │   ├── components/    # UI components
-│   │   ├── store/         # Zustand stores
-│   │   ├── hooks/         # Custom React hooks
-│   │   └── styles/        # CSS files
-│   └── shared/            # Types & constants
-├── resources/             # Icons & presets
-├── dist/                  # Built files
-└── package.json           # Dependencies & scripts
+C:\Users\[YourUsername]\AppData\Roaming\Electron\exports\
 ```
 
-### State Management
-- **timelineStore**: Clips, tracks, playback state
-- **mediaStore**: Imported files, proxies, metadata
-- **exportStore**: Export queue, presets, progress
-- **clipboardStore**: 10-item clipboard history
-- **effectsStore**: Effects/transitions library
-- **projectStore**: Project metadata, templates
-- **preferencesStore**: User settings, theme
+## 💻 System Requirements
 
-## 🎨 Customization
+### Minimum
+- **OS**: Windows 10/11 (64-bit)
+- **RAM**: 4 GB
+- **Disk**: 2 GB free space
+- **Processor**: Intel i5 / AMD Ryzen 5 or equivalent
 
-### Adding Export Presets
-Edit `src/shared/constants.ts` → `EXPORT_PRESETS`:
+### Recommended
+- **OS**: Windows 11 (64-bit)
+- **RAM**: 8+ GB
+- **Disk**: SSD with 5+ GB free space
+- **GPU**: NVIDIA GPU for 2-3x faster export (NVENC support)
+- **Processor**: Intel i7 / AMD Ryzen 7 or better
 
-```typescript
-youtube_8k: {
-  name: 'YouTube 8K',
-  width: 7680,
-  height: 4320,
-  fps: 60,
-  videoBitrate: '50M',
-  audioBitrate: '320k',
-  codec: 'libx265',
-  preset: 'slow',
-  format: 'mp4',
-},
+## 📊 Performance
+
+- **Startup**: ~4 seconds
+- **Build**: ~8-10 seconds (Webpack compilation)
+- **Memory**: 150-250 MB normal, 400-500 MB during export
+- **Export Speed**: ~1 minute video takes ~1 minute to export (with effects)
+- **GPU Acceleration**: NVIDIA NVENC 2-3x faster than software encoding
+
+## 🎯 Workflow Example
+
 ```
+1. Load video file
+   └─ Click "Add Media" → Select MP4/MOV file
 
-### Adding Effects
-Edit `src/renderer/store/effectsStore.ts` → `effects`:
+2. Add to timeline
+   └─ Drag from Media Library to timeline
 
-```typescript
-{
-  id: 'sepia',
-  name: 'Sepia',
-  type: 'color',
-  parameters: {
-    intensity: { value: 0.5, min: 0, max: 1 },
-  },
-}
+3. Trim clip
+   └─ Double-click → Set trim start/end points
+
+4. Apply color grading
+   └─ Adjust brightness +20, contrast +10
+
+5. Add text overlay
+   └─ Click "Add Text" → Position at bottom
+
+6. Apply filter
+   └─ Select clip → Choose "Sepia" filter
+
+7. Export
+   └─ Click "Export Video" → Wait for completion
+
+8. Playback
+   └─ Open exported file from exports folder
 ```
-
-### Themes
-Edit `src/renderer/styles/themes.css` to modify dark/light/high-contrast themes.
 
 ## 🐛 Troubleshooting
 
-### FFmpeg Not Found
-```powershell
-# Windows: Install via Chocolatey
-choco install ffmpeg
+### Export Not Starting
+- Ensure at least one video clip is on timeline
+- Check that media files are accessible
+- Verify at least 2 GB disk space is available
 
-# Or download from ffmpeg.org and add to PATH
+### Text Not Appearing
+- Verify text duration spans the exported timeline
+- Check text is positioned between 0-1 (not off-screen)
+- Ensure font size is large enough (minimum 12px recommended)
+
+### Slow Export
+- Normal for complex timelines with multiple effects
+- NVIDIA GPU acceleration can speed up 2-3x
+- Try reducing number of filters/effects
+- Close other applications to free RAM
+
+### Missing Audio
+- Check if audio track is muted (speaker icon)
+- Verify source video has audio
+- Try exporting a single clip to test
+
+## 📁 File Locations
+
+**Exported Videos**:
+```
+C:\Users\[YourUsername]\AppData\Roaming\Electron\exports\
 ```
 
-### Slow 4K Playback
-- Enable proxy editing in Preferences → Performance
-- Lower proxy quality to "Low" (1Mbps)
-- Ensure hardware acceleration is detected (check status bar)
+**Project Files** (auto-saved):
+```
+C:\Users\[YourUsername]\Documents\VideoEditorProjects\
+```
 
-### Export Failures
-- Check disk space (exports require 2x final file size)
-- Disable Smart Render if encountering codec issues
-- View logs in `AppData/Roaming/electron-video-editor/logs/`
+**Cache**:
+```
+C:\Users\[YourUsername]\AppData\Roaming\Electron\.video-editor-cache\
+```
 
-### Crash Recovery
-- Relaunch app → Click "Recover Project" in splash screen
-- Auto-save creates backups every 60 seconds
+## 🔄 Updates
 
-## 📝 License
+ATACUT is a standalone application. To update:
+1. Download latest installer from release page
+2. Run new installer (previous version will be replaced)
+3. Your projects and exported videos remain untouched
 
-MIT License
+## 📄 License
 
-## 🤝 Contributing
+Commercial use licensed for personal and professional projects.
 
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Commit changes with clear messages
-4. Open a Pull Request
+## 🤝 Support
 
-## 🙏 Acknowledgments
+For issues or feature requests, please include:
+- Windows version (Settings → System → About)
+- RAM available
+- Steps to reproduce issue
+- Screenshot if applicable
 
-- **FFmpeg** - Video processing foundation
-- **Electron** - Cross-platform framework
-- **React** - UI library
-- **Zustand** - State management
+## 🎨 Credits
+
+Built with:
+- **Electron 28** - Desktop framework
+- **React 18** - UI library
+- **FFmpeg** - Video processing
+- **TypeScript 5.3** - Type safety
+- **Webpack 5** - Module bundling
+
+## 📝 Version History
+
+### v1.0 (December 15, 2025)
+- ✅ Complete video editing suite
+- ✅ Color grading (brightness, contrast, saturation)
+- ✅ Filter effects (blur, sharpen, sepia, vintage)
+- ✅ Text overlay support
+- ✅ Multi-track timeline
+- ✅ Magnetic snapping
+- ✅ Hardware acceleration (NVIDIA NVENC, Intel QSV)
+- ✅ MP4 export (H.264 + AAC)
+- ✅ Professional UI
+- ✅ Comprehensive keyboard shortcuts
+
+---
+
+**Made with ❤️ for video creators**
+
+ATACUT v1.0 - Professional Video Editor
+
+## 🚢 Download & Install (Windows)
+
+1) Ga naar de Releases pagina:
+   - https://github.com/frknatalay42-png/Atacut-Free-video-editor/releases
+
+2) Download de installer:
+   - Bestandsnaam: ATACUT-Setup-x64.exe (of vergelijkbaar)
+
+3) Start de installatie:
+   - Dubbelklik op het .exe-bestand
+   - Kies installatielocatie (standaard is prima)
+   - Klik “Installeren” en wacht tot de installatie voltooid is
+
+4) Start ATACUT:
+   - Via het Startmenu of het bureaubladpictogram
+
+5) Eerste gebruik (aanbevolen):
+   - Voeg media toe en maak een korte testexport om te verifiëren dat alles werkt
+
+Opmerkingen:
+- ATACUT ondersteunt Windows 10/11 (64-bit)
+- Verwijderen kan via Instellingen → Apps → ATACUT → Verwijderen
