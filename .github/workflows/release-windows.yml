@@ -41,7 +41,7 @@ jobs:
           if (Test-Path dist) { Remove-Item dist -Recurse -Force }
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build app (webpack)
         run: npm run build

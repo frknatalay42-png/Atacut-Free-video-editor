@@ -1,12 +1,11 @@
 module.exports = {
-  appId: 'com.atacut.app',
+  appId: 'com.atacut.editor',
   productName: 'ATACUT',
   copyright: 'Copyright © 2025 - ATACUT Video Editor',
   asar: false,
-  asarUnpack: [],
   directories: {
     output: 'build',
-    buildResources: 'resources'
+    buildResources: 'build-resources'
   },
   files: [
     'dist/**/*',
@@ -21,16 +20,12 @@ module.exports = {
     '!**/node_modules/**/{appveyor.yml,.travis.yml,circle.yml}'
   ],
   win: {
-    target: [
-      'nsis'
-    ],
-    certificateFile: null,
-    certificatePassword: null,
-    signingHashAlgorithms: ['sha256'],
-    sign: null
+    target: 'nsis',
+    icon: 'build-resources/icon.ico'
   },
   nsis: {
     oneClick: false,
+    allowElevation: true,
     allowToChangeInstallationDirectory: true
   }
 };
