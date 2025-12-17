@@ -20,8 +20,7 @@ module.exports = {
     '!**/node_modules/**/{appveyor.yml,.travis.yml,circle.yml}'
   ],
   win: {
-    target: 'nsis',
-    icon: 'build-resources/icon.ico'
+    target: 'nsis'
   },
   nsis: {
     oneClick: false,
