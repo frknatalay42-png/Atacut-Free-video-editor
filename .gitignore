@@ -3,7 +3,8 @@ node_modules/
 package-lock.json
 
 # Build outputs
-dist/
+/dist/
+/electron-video-editor/dist/
 main.js
 main.js.map
 preload.js
@@ -13,7 +14,9 @@ renderer.js.LICENSE.txt
 renderer.js.map
 styles.css
 styles.css.map
-index.html
+# Only ignore built HTML in dist, not source templates
+/dist/index.html
+/electron-video-editor/dist/index.html
 
 # Distribution packages
 package/
