@@ -42,7 +42,7 @@ jobs:
         run: npm run build
 
       - name: Package (electron-builder, NSIS)
-        run: npx electron-builder --win nsis
+        run: npx electron-builder --config electron-builder.config.js --win nsis
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
