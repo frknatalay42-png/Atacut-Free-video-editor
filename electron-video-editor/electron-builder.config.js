@@ -24,6 +24,7 @@ module.exports = {
     target: [
       'nsis'
     ],
+    icon: null,
     certificateFile: null,
     certificatePassword: null,
     signingHashAlgorithms: ['sha256'],
