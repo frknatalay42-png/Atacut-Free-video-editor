@@ -24,7 +24,6 @@ module.exports = {
     target: [
       'nsis'
     ],
-    icon: false,
     certificateFile: null,
     certificatePassword: null,
     signingHashAlgorithms: ['sha256'],
@@ -32,8 +31,6 @@ module.exports = {
   },
   nsis: {
     oneClick: false,
-    allowToChangeInstallationDirectory: true,
-    installerIcon: false,
-    uninstallerIcon: false
+    allowToChangeInstallationDirectory: true
   }
 };
