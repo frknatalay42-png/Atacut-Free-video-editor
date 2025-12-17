@@ -1,6 +1,8 @@
 # Dependencies
 node_modules/
-package-lock.json
+/package-lock.json
+# Allow electron-video-editor lockfile for reproducible CI builds
+!electron-video-editor/package-lock.json
 
 # Build outputs
 /dist/
