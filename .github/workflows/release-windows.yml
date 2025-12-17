@@ -35,8 +35,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Clean install dependencies
+        run: |
+          rm -r -Force node_modules -ErrorAction SilentlyContinue
+          rm package-lock.json -ErrorAction SilentlyContinue
+          npm install
 
       - name: Build app (webpack)
         run: npm run build
