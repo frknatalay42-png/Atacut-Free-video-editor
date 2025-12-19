@@ -1,0 +1,9 @@
+{
+  "name": "atacut",
+  "version": "1.0.0",
+  "description": "ATACUT - Professional Video Editor",
+  "author": "ATACUT Team",
+  "devDependencies": {
+    "webpack-cli": "^6.0.1"
+  }
+}
