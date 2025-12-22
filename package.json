@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "ATACUT - Professional Video Editor",
   "author": "ATACUT Team",
+  "scripts": {
+    "build": "cd electron-video-editor && npm install && npm run build",
+    "package-win": "cd electron-video-editor && npm install && npm run package-win",
+    "package-linux": "cd electron-video-editor && npm install && npm run package-linux"
+  },
   "devDependencies": {
     "webpack-cli": "^6.0.1"
   }
