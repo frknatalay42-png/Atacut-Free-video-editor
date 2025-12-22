@@ -24,45 +24,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: 'npm'
 
       - name: Install dependencies
         working-directory: electron-video-editor
         run: |
-          npm ci
+          npm install
 
       - name: Build (webpack)
         working-directory: electron-video-editor
         run: |
           npm run build
 
-      - name: Package (Windows)
-        if: matrix.os == 'windows-latest'
-        working-directory: electron-video-editor
-        run: |
-          npm run package-win
-
-      - name: Package (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        working-directory: electron-video-editor
-        run: |
-          npm run package-linux
+      # Packaging is handled in release workflow; CI focuses on build only
 
       - name: Upload build artifacts
-        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: atacut-windows
+          name: atacut-${{ matrix.os }}-dist
           path: |
             electron-video-editor/dist/**
-            electron-video-editor/build/ATACUT-win32-x64/**
-
-      - name: Upload build artifacts (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: atacut-linux
-          path: |
-            electron-video-editor/dist/**
-            electron-video-editor/dist/*.AppImage
-            electron-video-editor/dist/*.deb
