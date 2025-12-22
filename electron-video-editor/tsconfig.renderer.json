@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["node_modules/*", "shared/*"]
+    },
+    "outDir": "./dist/renderer",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src/renderer/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/main/**/*",
+    "src/renderer/**/*.disabled/**/*"
+  ]
+}

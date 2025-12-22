@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+main.js
+main.js.map
+preload.js
+preload.js.map
+renderer.js
+renderer.js.LICENSE.txt
+renderer.js.map
+styles.css
+styles.css.map
+dist/index.html
+
+# Distribution packages
+package/
+win-unpacked/
+VideoEditor-Portable/
+*.exe
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+
+# Cache and temporary files
+.cache/
+.video-editor-cache/
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test coverage
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build errors
+build-errors.txt
+builder-effective-config.yaml
+
+# Asar check folder (development only)
+asar-check/
