@@ -1,0 +1,78 @@
+name: Release Builds
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g., v1.0.0)'
+        required: false
+
+jobs:
+  build-release:
+    name: Build Release Artifacts
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        node: [18]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: electron-video-editor
+        run: |
+          npm ci
+
+      - name: Build
+        working-directory: electron-video-editor
+        run: |
+          npm run build
+
+      - name: Package (Windows)
+        if: matrix.os == 'windows-latest'
+        working-directory: electron-video-editor
+        run: |
+          npm run package-win
+
+      - name: Package (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: electron-video-editor
+        run: |
+          npm run package-linux
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: atacut-${{ matrix.os }}
+          path: |
+            electron-video-editor/dist/**
+            electron-video-editor/build/**
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: build-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
