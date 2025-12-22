@@ -58,7 +58,8 @@ sudo dpkg -i ATACUT-*.deb
 
 ### Export
 - **Format**: MP4 (H.264 video + AAC audio)
-- **Resolution**: 1920×1080 (Full HD)
+- **Resolution**: 1920×1080 (Full HD) or 3840×2160 (4K)
+- **Platform Presets**: YouTube, Instagram (Story/Feed), Facebook, TikTok
 - **Hardware Acceleration**: NVIDIA NVENC, Intel QSV
 - **All Effects Applied**: Color grading, filters, and text render in output
 
