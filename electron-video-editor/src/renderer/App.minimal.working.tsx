@@ -3311,12 +3311,7 @@ const App: React.FC = () => {
                     );
                   })()}
 
-                  {/* VFX Overlays - Render all visible VFX clips */}
-                  {timelineClips
-                    .filter(clip => 
-                      clip.opacity === 0
-                    )
-                    .map(clip => {
+                  {/* VFX Overlays */}
                   {showSafeMargins && (
                     <>
                       {/* Action Safe (90%) */}
@@ -4010,11 +4005,6 @@ const App: React.FC = () => {
                       
                       if (!selectedClipIds.includes(clip.id)) {
                         setSelectedClipIds([clip.id]);
-                      }
-                      
-                      // If it's a VFX clip, also track it for VFX properties
-                      if (clip.isVFX) {
-                        setSelectedVFXClipId(clip.id);
                       }
                       
                       // Smart positioning: flip menu if it would go off screen
