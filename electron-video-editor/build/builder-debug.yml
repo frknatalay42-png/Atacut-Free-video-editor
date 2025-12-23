@@ -1,0 +1,34 @@
+x64:
+  firstOrDefaultFilePatterns:
+    - '!**/node_modules'
+    - '!build-resources{,/**/*}'
+    - '!build{,/**/*}'
+    - dist/**/*
+    - package.json
+    - resources/**/*
+    - node_modules/**/*
+    - '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}'
+    - '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}'
+    - '!**/node_modules/**/*.d.ts'
+    - '!**/node_modules/.bin'
+    - '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}'
+    - '!**/node_modules/**/{appveyor.yml,.travis.yml,circle.yml}'
+    - '!**/*.{iml,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,suo,xproj,cc,d.ts,mk,a,o,forge-meta,pdb}'
+    - '!**/._*'
+    - '!**/electron-builder.{yaml,yml,json,json5,toml,ts}'
+    - '!**/{.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,.DS_Store,thumbs.db,.gitignore,.gitkeep,.gitattributes,.npmignore,.idea,.vs,.flowconfig,.jshintrc,.eslintrc,.circleci,.yarn-integrity,.yarn-metadata.json,yarn-error.log,yarn.lock,package-lock.json,npm-debug.log,appveyor.yml,.travis.yml,circle.yml,.nyc_output,.husky,.github,electron-builder.env}'
+    - '!.yarn{,/**/*}'
+    - '!.editorconfig'
+    - '!.yarnrc.yml'
+  nodeModuleFilePatterns:
+    - '**/*'
+    - dist/**/*
+    - package.json
+    - resources/**/*
+    - node_modules/**/*
+    - '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}'
+    - '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}'
+    - '!**/node_modules/**/*.d.ts'
+    - '!**/node_modules/.bin'
+    - '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}'
+    - '!**/node_modules/**/{appveyor.yml,.travis.yml,circle.yml}'

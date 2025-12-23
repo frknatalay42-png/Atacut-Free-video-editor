@@ -87,6 +87,13 @@ interface TimelineClip {
   textStrokeWidth?: number;
   // Keyframe animation
   keyframes?: Keyframe[];
+  // VFX/Overlay properties
+  isVFX?: boolean;
+  blendMode?: 'normal' | 'add' | 'screen' | 'multiply' | 'overlay' | 'lighten' | 'darken';
+  positionX?: number; // -1 to 1 (normalized)
+  positionY?: number; // -1 to 1 (normalized)
+  scaleX?: number; // 0.1 to 5
+  scaleY?: number; // 0.1 to 5
 }
 
 interface Keyframe {
@@ -170,6 +177,8 @@ const App: React.FC = () => {
   const [showKeyframeEditor, setShowKeyframeEditor] = useState(false);
   const [keyframeClipId, setKeyframeClipId] = useState<string | null>(null);
   const [hoveredSubmenu, setHoveredSubmenu] = useState<string | null>(null);
+  const [showTransitionPicker, setShowTransitionPicker] = useState(false);
+  const [transitionClipId, setTransitionClipId] = useState<string | null>(null);
   const [lassoStart, setLassoStart] = useState<{x: number, y: number} | null>(null);
   const [lassoRect, setLassoRect] = useState<{x: number, y: number, width: number, height: number} | null>(null);
   const [waveformCache, setWaveformCache] = useState<Map<string, number[]>>(new Map());
@@ -185,6 +194,42 @@ const App: React.FC = () => {
     { name: 'High Contrast', path: 'presets/high-contrast.cube' },
     { name: 'Teal & Orange', path: 'presets/teal-orange.cube' },
   ]);
+  const [availableFonts] = useState<string[]>([
+    'Arial', 'Arial Black', 'Courier New', 'Georgia', 'Impact', 'Times New Roman', 'Verdana',
+    'Jost', 'Bartino', 'Bartino Outline', 'Bartino Stripes', 'Albatross', 'Blocky', 'Bups',
+    'Compagnon', 'Elvalle', 'Ferron', 'Garute', 'Goodfish', 'Gros Ventre', 'Guti', 'Interva',
+    'Jaiho', 'Kinder Cold', 'Little Hope', 'Lost Tumbler', 'Loveya', 'Love Malia', 'Lunera',
+    'Momo Signature', 'Narezka', 'Outline Style', 'Pilo', 'Quick Winter', 'Space Rabbit',
+    'Spicy Sale', 'Stone Tomb', 'Super Croissant', 'Super Meatball', 'Super Naive', 'Zyzol'
+  ]);
+  const [availableTransitions] = useState<{id: string, name: string, preview: string}[]>([
+    { id: 'fade', name: 'Fade', preview: '' },
+    { id: 'dissolve', name: 'Dissolve', preview: '' },
+    { id: 'zoom', name: 'Zoom', preview: 'mixkit-zoom-transition-131' },
+    { id: 'zoom-bounce', name: 'Zoom Bounce', preview: 'mixkit-zoom-bounce-transition-209' },
+    { id: 'outwards-zoom', name: 'Outwards Zoom', preview: 'mixkit-outwards-zoom-transition-210' },
+    { id: 'sideways-zoom', name: 'Sideways Zoom', preview: 'mixkit-sideways-zoom-transition-133' },
+    { id: 'countdown-zoom', name: 'Countdown Zoom', preview: 'mixkit-countdown-zoom-transition-763' },
+    { id: 'spin', name: 'Spin & Twist', preview: 'mixkit-spin-and-twist-transition-45' },
+    { id: 'reverse-spin', name: 'Reverse Spin', preview: 'mixkit-reverse-spin-transition-212' },
+    { id: 'distort-sideways', name: 'Distort Sideways', preview: 'mixkit-distort-sideways-transition-134' },
+    { id: 'liquid-swipe', name: 'Liquid Swipe', preview: 'mixkit-liquid-swipe-left-to-right-transition-33' },
+    { id: 'bright-bokeh', name: 'Bright Bokeh', preview: 'mixkit-bright-bokeh-transition-469' },
+    { id: 'twirling-bokeh', name: 'Twirling Bokeh', preview: 'mixkit-twirling-bokeh-transition-471' },
+    { id: 'digital-static', name: 'Digital Static', preview: 'mixkit-digital-static-transition-404' },
+  ]);
+  const [availableVFX] = useState<{id: string, name: string, path: string}[]>([
+    { id: 'vfx-1', name: 'Light Leak', path: '105530-670487324_medium.mp4' },
+    { id: 'vfx-2', name: 'Particles', path: '118783-715736187_medium.mp4' },
+    { id: 'vfx-3', name: 'Smoke', path: '144768-785265049_medium.mp4' },
+    { id: 'vfx-4', name: 'Glow', path: '201449-915698716_medium.mp4' },
+    { id: 'vfx-5', name: 'Flare', path: '202510-918431158_medium.mp4' },
+    { id: 'vfx-6', name: 'Glitch', path: '98191-647151551_medium.mp4' },
+  ]);
+  const [showVFXPanel, setShowVFXPanel] = useState(false);
+  const [selectedVFXClipId, setSelectedVFXClipId] = useState<string | null>(null);
+  const [showVFXProperties, setShowVFXProperties] = useState(false);
+  const [isWindowVisible, setIsWindowVisible] = useState(true);
   const [showAudioMixer, setShowAudioMixer] = useState(false);
   const [audioTracks, setAudioTracks] = useState<{id: string, name: string, volume: number, pan: number, muted: boolean, solo: boolean}[]>([
     { id: 'master', name: 'Master', volume: 100, pan: 0, muted: false, solo: false },
@@ -265,6 +310,18 @@ const App: React.FC = () => {
   const isTextClip = currentClipMemo?.isTextClip;
   const currentClipVolume = currentClipMemo?.volume;
   const currentClipMuted = currentClipMemo?.muted;
+  
+  
+  // Handle window visibility for audio optimization
+  React.useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsWindowVisible(!document.hidden);
+      // Don't pause - just track visibility for render optimization
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
   
   // Menu event listeners (only set up once on mount)
   React.useEffect(() => {
@@ -880,7 +937,14 @@ const App: React.FC = () => {
           setPlayheadPosition(totalDuration);
           if (videoRef.current) videoRef.current.pause();
         } else {
-          setPlayheadPosition(newPosition);
+          // Aggressive throttling: only update every 50ms when window hidden, every 16ms when visible
+          // This reduces render overhead while keeping audio alive
+          const throttleMs = isWindowVisible ? 16 : 50;
+          const timeSinceLastUpdate = Date.now() - (window as any).__lastPlayheadUpdate || 0;
+          if (timeSinceLastUpdate > throttleMs) {
+            setPlayheadPosition(newPosition);
+            (window as any).__lastPlayheadUpdate = Date.now();
+          }
           animationFrameRef.current = requestAnimationFrame(animate);
         }
       };
@@ -1100,6 +1164,56 @@ const App: React.FC = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if dropping VFX
+    const vfxData = e.dataTransfer.getData('vfx');
+    if (vfxData) {
+      try {
+        const vfx = JSON.parse(vfxData);
+        console.log('Dropping VFX:', vfx);
+
+        const timelineContainer = e.currentTarget as HTMLElement;
+        const rect = timelineContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left - 60;
+        
+        const dropTime = Math.max(0, x / zoom);
+        
+        // Create or get Effects track
+        let effectsTrackIndex = tracks.findIndex(t => t.type === 'effects');
+        if (effectsTrackIndex === -1) {
+          // Create new effects track
+          const newTrackIndex = tracks.length;
+          const newEffectsTrack = { index: newTrackIndex, label: 'Effects', type: 'effects' as const, color: '#FF6B9D' };
+          setTracks(prev => [...prev, newEffectsTrack]);
+          effectsTrackIndex = newTrackIndex;
+        }
+
+        const vfxClip: TimelineClip = {
+          id: `vfx-${Date.now()}-${Math.random()}`,
+          mediaId: vfx.id,
+          mediaPath: vfx.path,
+          mediaName: vfx.name,
+          startTime: Math.max(0, dropTime),
+          duration: 5, // Default 5 seconds
+          trackIndex: effectsTrackIndex,
+          isVFX: true,
+          blendMode: 'screen',
+          opacity: 100,
+          positionX: 0,
+          positionY: 0,
+          scaleX: 1,
+          scaleY: 1,
+        };
+
+        setTimelineClips(prev => [...prev, vfxClip].sort((a, b) => a.startTime - b.startTime));
+        setSelectedClipIds([vfxClip.id]);
+        console.log('VFX clip added:', vfxClip);
+        return;
+      } catch (error) {
+        console.error('Failed to parse VFX data:', error);
+      }
+    }
+    
     console.log('Drop event, draggedMedia:', draggedMedia);
     
     // Check if dropping external files
@@ -1762,13 +1876,16 @@ const App: React.FC = () => {
     >
       {/* Top Bar */}
       <div style={{ 
-        padding: '6px 10px', 
+        padding: '4px 8px', 
         background: 'linear-gradient(180deg, #2d2d2d 0%, #252525 100%)',
         borderBottom: '2px solid #1a1a1a',
         boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
         display: 'flex',
-        gap: '6px',
+        gap: '4px',
+        rowGap: '4px',
+        flexWrap: 'wrap',
         alignItems: 'center',
+        overflowX: 'auto',
       }}>
         {/* File Operations */}
         <button 
@@ -1849,7 +1966,7 @@ const App: React.FC = () => {
           💾
         </button>
         
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
         
         <button 
           onClick={handleImportVideo} 
@@ -1862,10 +1979,10 @@ const App: React.FC = () => {
           onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
-          📁 Import Media
+          📁 Import
         </button>
         
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
         
         {/* Playback Controls */}
         <button 
@@ -1874,7 +1991,7 @@ const App: React.FC = () => {
             ...buttonStyle,
             background: isPlaying ? 'linear-gradient(135deg, #ff6b6b, #d63031)' : 'linear-gradient(135deg, #50C878, #2d8653)',
             boxShadow: isPlaying ? '0 2px 6px rgba(255, 107, 107, 0.4)' : '0 2px 6px rgba(80, 200, 120, 0.4)',
-            minWidth: '70px',
+            minWidth: '60px',
             fontWeight: '600',
           }}
           onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
@@ -1897,7 +2014,7 @@ const App: React.FC = () => {
           onMouseEnter={(e) => selectedClipIds.length > 0 && (e.currentTarget.style.transform = 'translateY(-1px)')}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
-          ✂️ Split
+          ✂️
         </button>
         
         <button 
@@ -1913,10 +2030,10 @@ const App: React.FC = () => {
           onMouseEnter={(e) => selectedClipIds.length > 0 && (e.currentTarget.style.transform = 'translateY(-1px)')}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
-          🗑️ Delete
+          🗑️
         </button>
         
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
 
         {/* Undo/Redo Buttons */}
         <button 
@@ -1947,7 +2064,7 @@ const App: React.FC = () => {
           ↷
         </button>
         
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
         
         {/* Text Tool */}
         <button 
@@ -1971,10 +2088,10 @@ const App: React.FC = () => {
           onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
-          🅰️ Add Text
+          🅰️ Text
         </button>
         
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
         
         {/* View Options */}
         <button 
@@ -2001,19 +2118,7 @@ const App: React.FC = () => {
           📊
         </button>
         
-        <button 
-          onClick={() => setMagneticSnap(!magneticSnap)} 
-          style={{
-            ...smallButtonStyle,
-            background: magneticSnap ? '#9B59B6' : '#3a3a3a',
-            boxShadow: magneticSnap ? '0 2px 4px rgba(155, 89, 182, 0.4)' : 'none',
-          }}
-          title="Toggle magnetic snapping"
-        >
-          🧲
-        </button>
-        
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
         
         {/* Effects Panel Toggle */}
         <button 
@@ -2027,8 +2132,20 @@ const App: React.FC = () => {
         >
           ✨ Effects
         </button>
+
+        <button 
+          onClick={() => setShowVFXPanel(!showVFXPanel)} 
+          style={{
+            ...buttonStyle,
+            background: showVFXPanel ? 'linear-gradient(135deg, #FF6B9D, #E83E5E)' : '#3a3a3a',
+            boxShadow: showVFXPanel ? '0 2px 6px rgba(255, 107, 157, 0.4)' : 'none',
+          }}
+          title="Toggle VFX Library"
+        >
+          🎬 VFX
+        </button>
         
-        <div style={{ width: '1px', height: '30px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
+        <div style={{ width: '1px', height: '22px', background: 'linear-gradient(180deg, transparent, #555, transparent)' }} />
         
         {/* Export */}
         {/* New Project Preset Modal trigger */}
@@ -2072,13 +2189,13 @@ const App: React.FC = () => {
             boxShadow: !isExporting && timelineClips.length > 0 ? '0 2px 6px rgba(155, 89, 182, 0.4)' : 'none',
             cursor: isExporting || timelineClips.length === 0 ? 'not-allowed' : 'pointer',
             opacity: isExporting || timelineClips.length === 0 ? 0.5 : 1,
-            minWidth: '140px',
+            minWidth: '120px',
           }} 
           disabled={isExporting || timelineClips.length === 0}
           onMouseEnter={(e) => !isExporting && timelineClips.length > 0 && (e.currentTarget.style.transform = 'translateY(-1px)')}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
-          {isExporting ? `⏳ ${exportProgress}% Exporteren...` : '📤 Export Video'}
+          {isExporting ? `⏳ ${exportProgress}%` : '📤 Export'}
         </button>
 
         {/* Project Preset Modal */}
@@ -2136,7 +2253,7 @@ const App: React.FC = () => {
           }}
           title={`Magnetic Snap (${magneticSnap ? 'ON' : 'OFF'}) - Press G`}
         >
-          {magneticSnap ? '🧲 ON' : '🧲 OFF'}
+          {magneticSnap ? '🧲 On' : '🧲 Off'}
         </button>
         
         {/* Right Side Controls */}
@@ -2674,16 +2791,6 @@ const App: React.FC = () => {
                               const volumeLevel = Math.min(1.0, Math.max(0.0, (currentClipMemo.volume || 100) / 100));
                               videoRef.current.volume = volumeLevel;
                               videoRef.current.muted = currentClipMemo.muted || false;
-                          
-                          // Optimize audio quality
-                          try {
-                            // @ts-ignore - mediaSession API
-                            if ('mediaSession' in navigator) {
-                              navigator.mediaSession.metadata = null;
-                            }
-                          } catch (e) {
-                            // Ignore if not supported
-                          }
                         }
                       }}
                       onCanPlayThrough={() => {
@@ -3284,6 +3391,68 @@ const App: React.FC = () => {
                       </div>
                     );
                   })()}
+
+                  {/* VFX Overlays - Render all visible VFX clips */}
+                  {timelineClips
+                    .filter(clip => 
+                      clip.isVFX && 
+                      playheadPosition >= clip.startTime && 
+                      playheadPosition < clip.startTime + clip.duration
+                    )
+                    .map(vfxClip => {
+                      const timeInClip = playheadPosition - vfxClip.startTime;
+                      const opacity = (vfxClip.opacity || 100) / 100;
+                      const blendMode = vfxClip.blendMode || 'normal';
+                      const scaleX = vfxClip.scaleX || 1;
+                      const scaleY = vfxClip.scaleY || 1;
+                      const positionX = vfxClip.positionX || 0;
+                      const positionY = vfxClip.positionY || 0;
+
+                      return (
+                        <video
+                          key={vfxClip.id}
+                          src={`/resources/vfx/${vfxClip.mediaPath}`}
+                          muted={true}
+                          playsInline
+                          autoPlay={false}
+                          controls={false}
+                          disablePictureInPicture={true}
+                          disableRemotePlayback={true}
+                          ref={(el) => {
+                            if (el) {
+                              // Sync VFX video to playhead without interrupting main audio
+                              try {
+                                const diff = Math.abs(el.currentTime - timeInClip);
+                                if (diff > 0.1) {
+                                  el.currentTime = timeInClip;
+                                }
+                                if (isPlaying && el.paused) {
+                                  el.play().catch(() => {}); // Ignore audio errors
+                                } else if (!isPlaying && !el.paused) {
+                                  el.pause();
+                                }
+                              } catch (e) {
+                                // Ignore CORS or security errors
+                              }
+                            }
+                          }}
+                          style={{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(calc(-50% + ${positionX * 50}%), calc(-50% + ${positionY * 50}%)) scale(${scaleX}, ${scaleY})`,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            opacity: opacity,
+                            mixBlendMode: blendMode as any,
+                            pointerEvents: 'none',
+                            zIndex: 50,
+                          }}
+                        />
+                      );
+                    })}
+
 
                   {/* Safe Margins Overlay */}
                   {showSafeMargins && (
@@ -3981,6 +4150,11 @@ const App: React.FC = () => {
                         setSelectedClipIds([clip.id]);
                       }
                       
+                      // If it's a VFX clip, also track it for VFX properties
+                      if (clip.isVFX) {
+                        setSelectedVFXClipId(clip.id);
+                      }
+                      
                       // Smart positioning: flip menu if it would go off screen
                       const menuHeight = 450; // Approximate height of clip context menu
                       const menuWidth = 220;
@@ -4586,7 +4760,7 @@ const App: React.FC = () => {
                   }}
                   onMouseLeave={() => setHoveredSubmenu(null)}
                 >
-                  {['fade', 'dissolve', 'wipe', 'slide', 'zoom', 'crossfade', 'circlewipe', 'pixelate'].map((type) => {
+                  {['fade', 'dissolve', 'zoom', 'zoom-bounce', 'outwards-zoom', 'sideways-zoom', 'countdown-zoom', 'spin', 'reverse-spin', 'distort-sideways', 'liquid-swipe', 'bright-bokeh', 'twirling-bokeh', 'digital-static', 'wipe', 'slide', 'crossfade'].map((type) => {
                     const hasTransition = currentClip?.transition?.type === type;
                     return (
                       <div
@@ -4613,7 +4787,7 @@ const App: React.FC = () => {
                           setClipContextMenu(null);
                         }}
                       >
-                        <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
+                        <span>{type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span>
                         {hasTransition && <span style={{ color: '#FFB347' }}>✓</span>}
                       </div>
                     );
@@ -4621,6 +4795,107 @@ const App: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Blend Mode Sub-menu (for VFX clips) */}
+            {currentClip?.isVFX && (
+              <div
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setHoveredSubmenu('blendmode')}
+              >
+                <div
+                  style={{
+                    padding: '10px 12px',
+                    cursor: 'pointer',
+                    borderLeft: '3px solid transparent',
+                    borderLeftColor: hoveredSubmenu === 'blendmode' ? '#FFB347' : 'transparent',
+                  }}
+                  onMouseEnter={(e) => {
+                    setHoveredSubmenu('blendmode');
+                    e.currentTarget.style.backgroundColor = '#3a3a3a';
+                  }}
+                  onMouseLeave={(e) => {
+                    setHoveredSubmenu(null);
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  Blend Mode ➜
+                </div>
+                {hoveredSubmenu === 'blendmode' && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '100%',
+                      top: 0,
+                      background: '#1a1a1a',
+                      border: '1px solid #3c3c3c',
+                      borderRadius: '4px',
+                      minWidth: '150px',
+                      maxHeight: '300px',
+                      overflow: 'auto',
+                    }}
+                    onMouseLeave={() => setHoveredSubmenu(null)}
+                  >
+                    {['normal', 'add', 'screen', 'multiply', 'overlay', 'lighten', 'darken'].map((mode) => {
+                      const hasMode = currentClip?.blendMode === mode;
+                      return (
+                        <div
+                          key={mode}
+                          style={{
+                            padding: '10px 14px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            color: hasMode ? '#FFB347' : '#fff',
+                            borderBottom: '1px solid #333',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#3a3a3a'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTimelineClips(prev => prev.map(c => 
+                              c.id === clipContextMenu.clipId 
+                                ? { ...c, blendMode: (mode as any) } 
+                                : c
+                            ));
+                            setClipContextMenu(null);
+                          }}
+                        >
+                          <span>{mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
+                          {hasMode && <span style={{ color: '#FFB347' }}>✓</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* VFX Properties (for VFX clips) */}
+            {currentClip?.isVFX && (
+              <div
+                style={{
+                  padding: '10px 12px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  color: '#fff',
+                  borderBottom: '1px solid #333',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#3a3a3a'; setHoveredSubmenu(null); }}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                onClick={() => {
+                  setSelectedVFXClipId(clipContextMenu.clipId);
+                  setShowVFXProperties(true);
+                  setClipContextMenu(null);
+                }}
+              >
+                ⚙️ VFX Properties
+              </div>
+            )}
 
             {/* Filters Sub-menu */}
             <div
@@ -5239,6 +5514,294 @@ const App: React.FC = () => {
         </div>
       )}
       
+      {/* VFX Library Panel */}
+      {showVFXPanel && (
+        <div
+          style={{
+            position: 'fixed',
+            right: 0,
+            top: '58px',
+            bottom: 0,
+            width: '350px',
+            background: 'linear-gradient(180deg, #2a2a2a, #1e1e1e)',
+            borderLeft: '2px solid #FF6B9D',
+            boxShadow: '-4px 0 16px rgba(0,0,0,0.5)',
+            padding: '16px',
+            overflowY: 'auto',
+            zIndex: 999,
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ margin: 0, fontSize: '18px', color: '#FF6B9D' }}>🎬 VFX Library</h2>
+            <button
+              onClick={() => setShowVFXPanel(false)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#fff',
+                fontSize: '20px',
+                cursor: 'pointer',
+                padding: '4px 8px',
+              }}
+            >
+              ×
+            </button>
+          </div>
+
+          <div style={{ marginBottom: '12px', fontSize: '11px', color: '#aaa' }}>
+            Drag VFX clips onto the timeline. They will automatically create an Effects track.
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            {availableVFX.map(vfx => (
+              <div
+                key={vfx.id}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.effectAllowed = 'copy';
+                  e.dataTransfer.setData('vfx', JSON.stringify(vfx));
+                }}
+                style={{
+                  padding: '12px',
+                  background: '#2a2a2a',
+                  border: '1px solid #444',
+                  borderRadius: '6px',
+                  cursor: 'grab',
+                  transition: 'all 0.2s',
+                  textAlign: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#3a3a3a';
+                  e.currentTarget.style.borderColor = '#FF6B9D';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#2a2a2a';
+                  e.currentTarget.style.borderColor = '#444';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div style={{ fontSize: '24px', marginBottom: '4px' }}>✨</div>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#fff' }}>{vfx.name}</div>
+                <div style={{ fontSize: '10px', color: '#888', marginTop: '4px' }}>Drag to timeline</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: '20px', padding: '12px', background: 'rgba(255, 107, 157, 0.1)', borderRadius: '6px', border: '1px solid #FF6B9D' }}>
+            <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '8px' }}>💡 VFX Tips:</div>
+            <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '11px', color: '#888' }}>
+              <li>Use Screen/Add blend modes for light effects</li>
+              <li>Use Multiply for darkening overlays</li>
+              <li>Adjust opacity for subtle effects</li>
+              <li>Scale and position for custom placement</li>
+            </ul>
+          </div>
+        </div>
+      )}
+      
+      {/* VFX Properties Panel - Edit selected VFX clip */}
+      {showVFXProperties && selectedVFXClipId && (() => {
+        const vfxClip = timelineClips.find(c => c.id === selectedVFXClipId && c.isVFX);
+        if (!vfxClip) return null;
+        
+        const updateVFXProperty = (key: string, value: any) => {
+          setTimelineClips(prev => prev.map(c =>
+            c.id === selectedVFXClipId ? { ...c, [key]: value } : c
+          ));
+        };
+        
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              right: showVFXPanel ? '350px' : '0',
+              top: '58px',
+              bottom: 0,
+              width: '320px',
+              background: 'linear-gradient(180deg, #2a2a2a, #1e1e1e)',
+              borderLeft: '2px solid #FF6B9D',
+              boxShadow: '-4px 0 16px rgba(0,0,0,0.5)',
+              padding: '16px',
+              overflowY: 'auto',
+              zIndex: 998,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h2 style={{ margin: 0, fontSize: '16px', color: '#FF6B9D' }}>VFX Properties</h2>
+              <button
+                onClick={() => {
+                  setShowVFXProperties(false);
+                  setSelectedVFXClipId(null);
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '16px', padding: '12px', background: 'rgba(255, 107, 157, 0.1)', borderRadius: '6px' }}>
+              <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '4px' }}>CLIP</div>
+              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#fff' }}>{vfxClip.mediaName}</div>
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '6px' }}>
+                Duration: {vfxClip.duration.toFixed(1)}s
+              </div>
+            </div>
+
+            {/* Blend Mode */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '11px', color: '#aaa', display: 'block', marginBottom: '6px' }}>Blend Mode</label>
+              <select
+                value={vfxClip.blendMode || 'normal'}
+                onChange={(e) => updateVFXProperty('blendMode', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  background: '#333',
+                  color: '#fff',
+                  border: '1px solid #555',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                }}
+              >
+                <option value="normal">Normal</option>
+                <option value="add">Add (Lighten)</option>
+                <option value="screen">Screen</option>
+                <option value="multiply">Multiply</option>
+                <option value="overlay">Overlay</option>
+                <option value="lighten">Lighten</option>
+                <option value="darken">Darken</option>
+              </select>
+            </div>
+
+            {/* Opacity */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: '#aaa' }}>Opacity</label>
+                <span style={{ fontSize: '11px', color: '#FF6B9D', fontWeight: 'bold' }}>
+                  {Math.round((vfxClip.opacity || 100) * 10) / 10}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={vfxClip.opacity || 100}
+                onChange={(e) => updateVFXProperty('opacity', parseInt(e.target.value))}
+                style={{ width: '100%', cursor: 'pointer' }}
+              />
+            </div>
+
+            {/* Scale X */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: '#aaa' }}>Scale X</label>
+                <span style={{ fontSize: '11px', color: '#FF6B9D', fontWeight: 'bold' }}>
+                  {(vfxClip.scaleX || 1).toFixed(2)}x
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="5"
+                step="0.1"
+                value={vfxClip.scaleX || 1}
+                onChange={(e) => updateVFXProperty('scaleX', parseFloat(e.target.value))}
+                style={{ width: '100%', cursor: 'pointer' }}
+              />
+            </div>
+
+            {/* Scale Y */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: '#aaa' }}>Scale Y</label>
+                <span style={{ fontSize: '11px', color: '#FF6B9D', fontWeight: 'bold' }}>
+                  {(vfxClip.scaleY || 1).toFixed(2)}x
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="5"
+                step="0.1"
+                value={vfxClip.scaleY || 1}
+                onChange={(e) => updateVFXProperty('scaleY', parseFloat(e.target.value))}
+                style={{ width: '100%', cursor: 'pointer' }}
+              />
+            </div>
+
+            {/* Position X */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: '#aaa' }}>Position X</label>
+                <span style={{ fontSize: '11px', color: '#FF6B9D', fontWeight: 'bold' }}>
+                  {((vfxClip.positionX || 0) * 100).toFixed(0)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="-1"
+                max="1"
+                step="0.05"
+                value={vfxClip.positionX || 0}
+                onChange={(e) => updateVFXProperty('positionX', parseFloat(e.target.value))}
+                style={{ width: '100%', cursor: 'pointer' }}
+              />
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>-100% (left) to +100% (right)</div>
+            </div>
+
+            {/* Position Y */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: '#aaa' }}>Position Y</label>
+                <span style={{ fontSize: '11px', color: '#FF6B9D', fontWeight: 'bold' }}>
+                  {((vfxClip.positionY || 0) * 100).toFixed(0)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="-1"
+                max="1"
+                step="0.05"
+                value={vfxClip.positionY || 0}
+                onChange={(e) => updateVFXProperty('positionY', parseFloat(e.target.value))}
+                style={{ width: '100%', cursor: 'pointer' }}
+              />
+              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>-100% (top) to +100% (bottom)</div>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowVFXProperties(false);
+                setSelectedVFXClipId(null);
+              }}
+              style={{
+                width: '100%',
+                padding: '10px',
+                background: 'linear-gradient(135deg, #FF6B9D, #E83E5E)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                marginTop: '16px',
+              }}
+            >
+              Close
+            </button>
+          </div>
+        );
+      })()}
+      
       {/* Keyframe Editor Panel - Simplified version without useState */}
       {showKeyframeEditor && keyframeClipId && (() => {
         const clip = timelineClips.find(c => c.id === keyframeClipId);
@@ -5444,25 +6007,50 @@ const App: React.FC = () => {
                   fontSize: '14px',
                 }}
               >
-                <optgroup label="Sans-Serif">
+                <optgroup label="System Fonts">
                   <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Verdana">Verdana</option>
-                  <option value="Tahoma">Tahoma</option>
-                  <option value="Trebuchet MS">Trebuchet MS</option>
-                  <option value="Impact">Impact</option>
                   <option value="Arial Black">Arial Black</option>
-                </optgroup>
-                <optgroup label="Serif">
-                  <option value="Georgia">Georgia</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Palatino">Palatino</option>
-                  <option value="Garamond">Garamond</option>
-                </optgroup>
-                <optgroup label="Monospace">
                   <option value="Courier New">Courier New</option>
-                  <option value="Monaco">Monaco</option>
-                  <option value="Consolas">Consolas</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Impact">Impact</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Verdana">Verdana</option>
+                </optgroup>
+                <optgroup label="Custom Fonts">
+                  <option value="Jost">Jost</option>
+                  <option value="Bartino">Bartino</option>
+                  <option value="Bartino Outline">Bartino Outline</option>
+                  <option value="Bartino Stripes">Bartino Stripes</option>
+                  <option value="Albatross">Albatross</option>
+                  <option value="Blocky">Blocky</option>
+                  <option value="Bups">Bups</option>
+                  <option value="Compagnon">Compagnon</option>
+                  <option value="Elvalle">Elvalle</option>
+                  <option value="Ferron">Ferron</option>
+                  <option value="Garute">Garute</option>
+                  <option value="Goodfish">Goodfish</option>
+                  <option value="Gros Ventre">Gros Ventre</option>
+                  <option value="Guti">Guti</option>
+                  <option value="Interva">Interva</option>
+                  <option value="Jaiho">Jaiho</option>
+                  <option value="Kinder Cold">Kinder Cold</option>
+                  <option value="Little Hope">Little Hope</option>
+                  <option value="Lost Tumbler">Lost Tumbler</option>
+                  <option value="Loveya">Loveya</option>
+                  <option value="Love Malia">Love Malia</option>
+                  <option value="Lunera">Lunera</option>
+                  <option value="Momo Signature">Momo Signature</option>
+                  <option value="Narezka">Narezka</option>
+                  <option value="Outline Style">Outline Style</option>
+                  <option value="Pilo">Pilo</option>
+                  <option value="Quick Winter">Quick Winter</option>
+                  <option value="Space Rabbit">Space Rabbit</option>
+                  <option value="Spicy Sale">Spicy Sale</option>
+                  <option value="Stone Tomb">Stone Tomb</option>
+                  <option value="Super Croissant">Super Croissant</option>
+                  <option value="Super Meatball">Super Meatball</option>
+                  <option value="Super Naive">Super Naive</option>
+                  <option value="Zyzol">Zyzol</option>
                 </optgroup>
               </select>
             </div>
@@ -5642,24 +6230,24 @@ const App: React.FC = () => {
 };
 
 const buttonStyle: React.CSSProperties = {
-  padding: '4px 10px',
+  padding: '3px 8px',
   backgroundColor: '#0066cc',
   color: '#fff',
   border: 'none',
   borderRadius: '3px',
   cursor: 'pointer',
-  fontSize: '12px',
+  fontSize: '11px',
   fontWeight: '600',
 };
 
 const smallButtonStyle: React.CSSProperties = {
-  padding: '3px 8px',
+  padding: '2px 6px',
   backgroundColor: '#444',
   color: '#fff',
   border: 'none',
   borderRadius: '3px',
   cursor: 'pointer',
-  fontSize: '11px',
+  fontSize: '10px',
 };
 
 export default App;

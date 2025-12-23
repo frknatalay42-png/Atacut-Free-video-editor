@@ -1,0 +1,39 @@
+===========================================================
+FONTLOG for the [Albatross] font
+===========================================================
+
+This file contains the Font Software’s history. 
+
+---
+### 1. Basic Font Information
+---
+
+**Font Family Name:** [Albatross]
+
+**Description:** [A monospaced, robotic style, bold decorative font.]
+
+**Designers:** [Ilham Albab]
+
+**Copyright:** [Copyright (c) 2025 Majinasi Design Studio]
+
+**License:** This Font Software is licensed under the SIL Open Font License, Version 1.1.
+
+---
+### 2. ChangeLog
+---
+(List changes in **reverse** chronological order—most recent release first.)
+
+**2025-09-26 (Version 1.001)**
+- Ilham Albab
+- Initial Public Release (IPR).
+- Final review of kerning.
+
+---
+### 3. Acknowledgements
+---
+
+**Contributors:** - [Ilham Albab]
+
+**Tools Used:** - [Affinity Designer, FontForge]
+
+**Inspiration/Funding:** - [Inspired by cyberpunk and mecha design style.]

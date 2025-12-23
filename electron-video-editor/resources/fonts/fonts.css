@@ -1,0 +1,246 @@
+/* Custom Fonts for ATACUT Video Editor */
+
+@font-face {
+  font-family: 'Jost';
+  src: url('./jost/Jost-400-Book.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Jost';
+  src: url('./jost/Jost-700-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bartino';
+  src: url('./Bartino-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bartino Outline';
+  src: url('./BartinoOutline-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bartino Stripes';
+  src: url('./BartinoStripes-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Albatross';
+  src: url('./albatross/Albatross.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Blocky';
+  src: url('./blocky/blocky.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bups';
+  src: url('./bups/bups2.0-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Compagnon';
+  src: url('./compagnon/Compagnon-Roman.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Elvalle';
+  src: url('./elvalle/Elvalle-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ferron';
+  src: url('./ferron/Ferron.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Garute';
+  src: url('./garute/Garute.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Goodfish';
+  src: url('./goodfish/Goodfish.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gros Ventre';
+  src: url('./gros_ventre/GrosVentre.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Guti';
+  src: url('./guti/Guti.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Interva';
+  src: url('./interva/Interva.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Jaiho';
+  src: url('./jaiho/Jaiho.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Kinder Cold';
+  src: url('./kinder_cold/KinderCold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Little Hope';
+  src: url('./little_hope/LittleHope.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lost Tumbler';
+  src: url('./lost_tumbler/LostTumbler.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Loveya';
+  src: url('./loveya/Loveya.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Love Malia';
+  src: url('./love_malia/LoveMalia.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lunera';
+  src: url('./lunera/Lunera.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Momo Signature';
+  src: url('./momo_signature/MomoSignature.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Narezka';
+  src: url('./narezka/Narezka.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Outline Style';
+  src: url('./outline_style/OutlineStyle.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pilo';
+  src: url('./pilo/Pilo.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Quick Winter';
+  src: url('./quick_winter/QuickWinter.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Space Rabbit';
+  src: url('./space_rabbit/SpaceRabbit.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Spicy Sale';
+  src: url('./spicy_sale/SpicySale.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Stone Tomb';
+  src: url('./stone_tomb/StoneTomb.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Super Croissant';
+  src: url('./super_croissant/SuperCroissant.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Super Meatball';
+  src: url('./super_meatball/SuperMeatball.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Super Naive';
+  src: url('./super_naive/SuperNaive.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Zyzol';
+  src: url('./zyzol/Zyzol.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
