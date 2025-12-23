@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "ATACUT - Professional Video Editor. Create, edit, and export videos with advanced color grading, effects, and text overlays.",
   "main": "dist/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frknatalay42-png/Atacut-Free-video-editor.git"
+  },
   "scripts": {
     "start": "electron dist/main.js",
     "build": "webpack --config webpack.main.config.js && webpack --config webpack.renderer.config.js && node -e \"require('fs').copyFileSync('package.json', 'dist/package.json');\" && npm run copy-ffmpeg",
