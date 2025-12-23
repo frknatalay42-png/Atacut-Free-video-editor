@@ -1,6 +1,6 @@
 {
   "name": "atacut",
-  "version": "1.0.0",
+  "version": "1.2.3",
   "description": "ATACUT - Professional Video Editor. Create, edit, and export videos with advanced color grading, effects, and text overlays.",
   "main": "dist/main.js",
   "repository": {
