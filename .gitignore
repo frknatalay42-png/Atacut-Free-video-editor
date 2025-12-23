@@ -18,6 +18,14 @@ styles.css
 styles.css.map
 # Only ignore built HTML in dist, not source templates
 /dist/index.html
+
+# Media files (too large for Git, managed separately)
+*.mp4
+transitions/
+vfx/
+resources/transitions/
+electron-video-editor/resources/transitions/
+electron-video-editor/resources/vfx/
 /electron-video-editor/dist/index.html
 
 # Distribution packages
