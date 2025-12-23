@@ -52,7 +52,7 @@ jobs:
       - name: Package (electron-builder, NSIS)
         env:
           ELECTRON_BUILDER_CACHE: ${{ runner.temp }}\electron-builder-cache
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: npx electron-builder --config electron-builder.config.js --win nsis
 
       - name: Create GitHub Release

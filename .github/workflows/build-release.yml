@@ -31,7 +31,7 @@ jobs:
       - name: Create installers
         working-directory: ./electron-video-editor
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: npm run package
 
       - name: Upload Windows artifacts
