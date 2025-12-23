@@ -34,6 +34,7 @@ jobs:
           fetch-depth: 0
 
       - name: Extract and set version from tag
+        shell: bash
         run: |
           VERSION=${{ github.ref_name }}
           VERSION=${VERSION#v}  # Remove 'v' prefix (v1.2.11 -> 1.2.11)
