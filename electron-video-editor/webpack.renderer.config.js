@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  mode: 'production',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   target: 'electron-renderer',
   entry: './src/renderer/index.tsx',
   output: {
