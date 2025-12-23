@@ -33,6 +33,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Extract and set version from tag
+        run: |
+          VERSION=${{ github.ref_name }}
+          VERSION=${VERSION#v}  # Remove 'v' prefix (v1.2.11 -> 1.2.11)
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version extracted: $VERSION"
+          # Update root package.json
+          npm version $VERSION --no-git-tag-version --allow-same-version
+          # Update electron-video-editor package.json
+          cd electron-video-editor && npm version $VERSION --no-git-tag-version --allow-same-version && cd ..
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

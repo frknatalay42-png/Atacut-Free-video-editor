@@ -41,4 +41,7 @@ module.exports = {
         __dirname: false,
         __filename: false,
     },
+    stats: {
+        errorDetails: true,
+    },
 };

@@ -50,5 +50,8 @@ module.exports = {
   devtool: 'source-map',
   externals: {
     'electron': 'commonjs2 electron'
+  },
+  stats: {
+    errorDetails: true,
   }
 };
