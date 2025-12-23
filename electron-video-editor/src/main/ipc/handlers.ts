@@ -26,6 +26,12 @@ const waveformGenerator = new WaveformGenerator();
 
 export function setupIpcHandlers(mainWindow: BrowserWindow) {
   logger.info('Setting up IPC handlers');
+  const sendIfAlive = (channel: string, ...args: any[]) => {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    const wc = mainWindow.webContents;
+    if (!wc || wc.isDestroyed()) return;
+    wc.send(channel, ...args);
+  };
 
   // ============================================================================
   // PROJECT MANAGEMENT
@@ -249,7 +255,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
       const outputPath = cacheManager.getProxyPath(mediaFile.id);
       
       proxyGenerator.on('progress', (inputPath, progress) => {
-        mainWindow.webContents.send(IPC_CHANNELS.PROXY_PROGRESS, mediaFile.id, progress);
+        sendIfAlive(IPC_CHANNELS.PROXY_PROGRESS, mediaFile.id, progress);
       });
 
       const proxyPath = await proxyGenerator.generateProxy({
@@ -258,7 +264,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
         quality: 'medium',
       });
 
-      mainWindow.webContents.send(IPC_CHANNELS.PROXY_COMPLETE, mediaFile.id, proxyPath);
+      sendIfAlive(IPC_CHANNELS.PROXY_COMPLETE, mediaFile.id, proxyPath);
       return proxyPath;
     } catch (error) {
       logger.error('Failed to generate proxy', error);
@@ -303,7 +309,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
       );
 
       if (mediaId) {
-        mainWindow.webContents.send(IPC_CHANNELS.THUMBNAIL_COMPLETE, mediaId, thumbnailPath);
+        sendIfAlive(IPC_CHANNELS.THUMBNAIL_COMPLETE, mediaId, thumbnailPath);
       }
       
       return { success: true, data: [thumbnailPath] };
@@ -335,13 +341,19 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle(IPC_CHANNELS.GENERATE_WAVEFORM, async (event, mediaFile: MediaFile) => {
     try {
       const outputPath = cacheManager.getWaveformPath(mediaFile.id);
+      const path = require('path');
+      const { existsSync, mkdirSync } = require('fs');
+      const dir = path.dirname(outputPath);
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+      }
       
       const waveformPath = await waveformGenerator.generateWaveform({
         audioPath: mediaFile.path,
         outputPath,
       });
 
-      mainWindow.webContents.send(IPC_CHANNELS.WAVEFORM_COMPLETE, mediaFile.id, waveformPath);
+      sendIfAlive(IPC_CHANNELS.WAVEFORM_COMPLETE, mediaFile.id, waveformPath);
       return waveformPath;
     } catch (error) {
       logger.error('Failed to generate waveform', error);
@@ -819,14 +831,14 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
           if (percent > lastProgress) {
             lastProgress = percent;
             logger.info(`⏳ Export progress: ${percent}%`);
-            mainWindow.webContents.send('export-progress', { percent });
+            sendIfAlive('export-progress', { percent });
           }
         });
 
         // Error handling
         command.on('error', (err) => {
           logger.error('❌ Export failed', { error: err.message });
-          mainWindow.webContents.send('export-error', { error: err.message });
+          sendIfAlive('export-error', { error: err.message });
           reject(err);
         });
 
@@ -844,7 +856,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
               });
               
               if (stats.size > 1000) { // At least 1KB
-                mainWindow.webContents.send('export-complete', { outputPath });
+                sendIfAlive('export-complete', { outputPath });
                 resolve({ 
                   success: true, 
                   outputPath,
@@ -852,12 +864,12 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
                 });
               } else {
                 logger.error('❌ Export file too small', { fileSize: stats.size });
-                mainWindow.webContents.send('export-error', { error: 'Exported file is too small - encoding may have failed' });
+                sendIfAlive('export-error', { error: 'Exported file is too small - encoding may have failed' });
                 reject(new Error('File size invalid'));
               }
             } else {
               logger.error('❌ Export file not found', { outputPath });
-              mainWindow.webContents.send('export-error', { error: 'Output file not found' });
+              sendIfAlive('export-error', { error: 'Output file not found' });
               reject(new Error('Output file not created'));
             }
           }, 1000); // Wait 1 second for file flush
@@ -870,7 +882,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow) {
     } catch (error) {
       logger.error('❌ Export error', { error });
       const errorMessage = error instanceof Error ? error.message : String(error);
-      mainWindow.webContents.send('export-error', { error: errorMessage });
+      sendIfAlive('export-error', { error: errorMessage });
       return { 
         success: false, 
         error: errorMessage 
