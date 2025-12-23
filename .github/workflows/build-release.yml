@@ -34,14 +34,14 @@ jobs:
 
       - name: Upload Windows artifacts
         if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: electron-video-editor/build/ATACUT-*.exe
 
       - name: Upload Linux artifacts
         if: runner.os == 'Linux'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-build
           path: |
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
