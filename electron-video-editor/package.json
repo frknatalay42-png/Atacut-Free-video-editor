@@ -9,12 +9,12 @@
   },
   "scripts": {
     "start": "electron dist/main.js",
-    "build": "webpack --config webpack.main.config.js && webpack --config webpack.renderer.config.js && node -e \"require('fs').copyFileSync('package.json', 'dist/package.json');\" && npm run copy-ffmpeg",
+    "build": "webpack --config webpack.main.config.js && webpack --config webpack.renderer.config.js && npm run copy-ffmpeg",
     "build-and-start": "npm run build && npm start",
     "copy-ffmpeg": "node scripts/copy-ffmpeg.js",
-    "package": "npm run build && electron-builder",
-    "package-win": "npm run build && electron-builder --win",
-    "package-linux": "npm run build && electron-builder --linux",
+    "package": "npm run build && electron-builder --config electron-builder.config.js",
+    "package-win": "npm run build && electron-builder --config electron-builder.config.js --win",
+    "package-linux": "npm run build && electron-builder --config electron-builder.config.js --linux",
     "dev": "concurrently \"webpack --watch --config webpack.main.config.js\" \"webpack --watch --config webpack.renderer.config.js\"",
     "test": "jest"
   },
