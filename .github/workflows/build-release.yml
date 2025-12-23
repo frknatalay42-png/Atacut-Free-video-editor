@@ -28,11 +28,19 @@ jobs:
         working-directory: ./electron-video-editor
         run: npm run build
 
-      - name: Create installers
+      - name: Create Windows installer
+        if: runner.os == 'Windows'
         working-directory: ./electron-video-editor
         env:
           GH_TOKEN: ${{ github.token }}
-        run: npm run package
+        run: npm run package-win
+
+      - name: Create Linux packages
+        if: runner.os == 'Linux'
+        working-directory: ./electron-video-editor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run package-linux
 
       - name: Upload Windows artifacts
         if: runner.os == 'Windows'
