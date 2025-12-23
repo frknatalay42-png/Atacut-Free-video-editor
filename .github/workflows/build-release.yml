@@ -1,12 +1,16 @@
-name: Build & Release ATACUT
+name: Build & Release ATACUT (DEPRECATED - Use Release Builds)
 
 on:
   push:
     tags:
-      - 'v*'  # Trigger op version tags: v1.0.0
+      - 'v*'  # Trigger on version tags
 
 permissions:
   contents: write
+
+concurrency:
+  group: build-release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
