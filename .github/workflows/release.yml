@@ -80,8 +80,10 @@ jobs:
         with:
           name: atacut-${{ matrix.os }}
           path: |
-            electron-video-editor/dist/**
-            electron-video-editor/build/**
+            electron-video-editor/build/ATACUT-Setup-*.exe
+            electron-video-editor/build/ATACUT-Setup-*.exe.blockmap
+            electron-video-editor/build/ATACUT-*.AppImage
+            electron-video-editor/build/ATACUT-*.deb
 
   publish-release:
     name: Publish GitHub Release
@@ -96,6 +98,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/**
+            artifacts/atacut-windows-latest/ATACUT-Setup-*.exe
+            artifacts/atacut-windows-latest/ATACUT-Setup-*.exe.blockmap
+            artifacts/atacut-ubuntu-latest/ATACUT-*.AppImage
+            artifacts/atacut-ubuntu-latest/ATACUT-*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
