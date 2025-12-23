@@ -26,6 +26,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: electron-video-editor/package-lock.json
 
+      - name: Ensure npm cache dir exists
+        shell: pwsh
+        run: |
+          $cacheDir = "$env:APPDATA\npm-cache"
+          if (-not (Test-Path $cacheDir)) { New-Item -ItemType Directory -Path $cacheDir | Out-Null }
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.APPDATA }}\npm-cache
+          key: ${{ runner.os }}-npm-${{ hashFiles('electron-video-editor/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       - name: Git LFS pull
         run: |
           git lfs install
